@@ -20,8 +20,10 @@ class MovieDetailViewController: UIViewController {
     @IBOutlet weak var lblOriginalLang: UILabel!
     @IBOutlet weak var lblReleaseDate: UILabel!
     @IBOutlet weak var btnButton: UIButton!
-    @IBOutlet weak var genreVStuckView: UIStackView!
-    @IBOutlet weak var VStuckHeight: NSLayoutConstraint!
+    @IBOutlet weak var lblGenre1: UILabel!
+    @IBOutlet weak var lblGenre2: UILabel!
+    @IBOutlet weak var lblGenre3: UILabel!
+    @IBOutlet weak var lblGenre4: UILabel!
     
     let loadingVC = LoadingIndicatorViewController(nibName: "LoadingIndicatorViewController", bundle: nil)
     var bookmarkBtn = UIBarButtonItem()
@@ -80,7 +82,11 @@ class MovieDetailViewController: UIViewController {
     func initView() {
         bookmarkBtn = UIBarButtonItem(title: "", style: .plain, target: self, action: #selector(onTouchBookmarkBtn(_:)))
         bookmarkStatus = presenter?.getBookmarkStatus(movieId: self.movieId) ?? false
-        bookmarkBtn.tintColor = .purple
+        if #available(iOS 13.0, *) {
+            bookmarkBtn.tintColor = .systemIndigo
+        } else {
+            bookmarkBtn.tintColor = UIColor.init(named: Colors.primary.rawValue)
+        }
         bookmarkBtn.image = bookmarkStatus ? #imageLiteral(resourceName: "bookmark_filled") : #imageLiteral(resourceName: "bookmark_empty")
         self.navigationItem.rightBarButtonItem = bookmarkBtn
         btnButton.setCornerRadius(to: 10)
@@ -119,24 +125,22 @@ class MovieDetailViewController: UIViewController {
     }
     
     private func createLables(genre: [MovieGenreVO]) {
-        //Stack View
-        let stackView = UIStackView()
-        stackView.axis = NSLayoutConstraint.Axis.horizontal
-        stackView.distribution = UIStackView.Distribution.fill
-        stackView.alignment = UIStackView.Alignment.fill
-        stackView.spacing = 3
-        
-        genre.forEach { genre in
-            let textLabel = UILabel()
-            textLabel.backgroundColor = UIColor.yellow
-            textLabel.font = UIFont.systemFont(ofSize: 12)
-            textLabel.text = genre.name
-            textLabel.textAlignment = .center
-            stackView.addArrangedSubview(textLabel)
+        if genre.count == 4 {
+            lblGenre4.text = " \(genre[3].name!) "
+            lblGenre3.text = " \(genre[2].name!) "
+            lblGenre2.text = " \(genre[1].name!) "
+            lblGenre1.text = " \(genre[0].name!) "
+        }else if genre.count == 3 {
+            lblGenre3.text = " \(genre[2].name!) "
+            lblGenre2.text = " \(genre[1].name!) "
+            lblGenre1.text = " \(genre[0].name!) "
+        }else if genre.count == 2 {
+            lblGenre2.text = " \(genre[1].name!) "
+            lblGenre1.text = " \(genre[0].name!) "
+        }else if genre.count == 1 {
+            lblGenre1.text = " \(genre[0].name!) "
         }
-        self.genreVStuckView.addArrangedSubview(stackView)
-        self.VStuckHeight.constant = 30
-    }
+     }
     
     @objc func onTouchBookmarkBtn(_ sender: UIButton) {
         if bookmarkStatus {

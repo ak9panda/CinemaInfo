@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ], animated: true)
 
         tabBarController.tabBar.barTintColor = UIColor.init(named: Colors.primaryBackground.rawValue)
-        tabBarController.tabBar.tintColor = UIColor(named: "PrimaryColor")
+        tabBarController.tabBar.tintColor = UIColor(named: Colors.primary.rawValue)
         tabBarController.tabBar.items![0].title = "Discover"
         tabBarController.tabBar.items![0].image = #imageLiteral(resourceName: "earth_empty")
         tabBarController.tabBar.items![0].selectedImage = #imageLiteral(resourceName: "earth_fill")
@@ -41,8 +41,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         tabBarController.tabBar.items![1].image = #imageLiteral(resourceName: "bookmark_empty")
         tabBarController.tabBar.items![1].selectedImage = #imageLiteral(resourceName: "bookmark_filled")
         tabBarController.tabBar.items![2].title = "Settings"
-        tabBarController.tabBar.items![2].image = #imageLiteral(resourceName: "bookmark_empty")
-        tabBarController.tabBar.items![2].selectedImage = #imageLiteral(resourceName: "bookmark_filled")
+        tabBarController.tabBar.items![2].image = #imageLiteral(resourceName: "settings_empty")
+        tabBarController.tabBar.items![2].selectedImage = #imageLiteral(resourceName: "settings_fill")
         
         window?.rootViewController = tabBarController
         UIApplication.shared.override(UserDefaults.standard.overridedUserInterfaceStyle)
