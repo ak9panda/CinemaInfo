@@ -1,0 +1,6 @@
+framework module Pods_CinemaInfo_CinemaInfoUITests {
+  umbrella header "Pods-CinemaInfo-CinemaInfoUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}
