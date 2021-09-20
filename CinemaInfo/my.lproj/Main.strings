@@ -1,0 +1,60 @@
+
+/* Class = "UIButton"; normalTitle = "Play Trailer"; ObjectID = "0YE-aV-2z5"; */
+"0YE-aV-2z5.normalTitle" = "Play Trailer";
+
+/* Class = "UILabel"; text = "Switch on and off when you want"; ObjectID = "FAn-h2-cFG"; */
+"FAn-h2-cFG.text" = "Switch on and off when you want";
+
+/* Class = "UILabel"; text = "Disabled"; ObjectID = "G2C-tM-2mB"; */
+"G2C-tM-2mB.text" = "Disabled";
+
+/* Class = "UILabel"; text = "Manual"; ObjectID = "N9T-Ae-r34"; */
+"N9T-Ae-r34.text" = "Manual";
+
+/* Class = "UILabel"; text = "Minimic iOS Appearance"; ObjectID = "Ss1-Xm-cKo"; */
+"Ss1-Xm-cKo.text" = "Minimic iOS Appearance";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "XXA-iQ-6IF"; */
+"XXA-iQ-6IF.text" = "Label";
+
+/* Class = "UILabel"; text = "Preferences"; ObjectID = "ZYm-ml-cQG"; */
+"ZYm-ml-cQG.text" = "Preferences";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "aDm-5C-Lms"; */
+"aDm-5C-Lms.text" = "Label";
+
+/* Class = "UILabel"; text = "Mode"; ObjectID = "amt-AT-fSP"; */
+"amt-AT-fSP.text" = "Mode";
+
+/* Class = "UILabel"; text = "Enable"; ObjectID = "bOo-i0-dBI"; */
+"bOo-i0-dBI.text" = "Enable";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "bUZ-fH-SwQ"; */
+"bUZ-fH-SwQ.text" = "Label";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "d0S-eJ-DJY"; */
+"d0S-eJ-DJY.text" = "Label";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "fcT-9h-ehv"; */
+"fcT-9h-ehv.text" = "Label";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "icW-Gd-FDU"; */
+"icW-Gd-FDU.text" = "Label";
+
+/* Class = "UIButton"; normalTitle = "Done"; ObjectID = "jZp-oh-fbA"; */
+"jZp-oh-fbA.normalTitle" = "Done";
+
+/* Class = "UILabel"; text = "Matches your phone preferences"; ObjectID = "jhF-fE-ERn"; */
+"jhF-fE-ERn.text" = "Matches your phone preferences";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "kpr-hl-rIy"; */
+"kpr-hl-rIy.text" = "Label";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "pvT-AW-Vaf"; */
+"pvT-AW-Vaf.text" = "Label";
+
+/* Class = "UILabel"; text = "Dark Mode"; ObjectID = "qzA-KR-9Wy"; */
+"qzA-KR-9Wy.text" = "Dark Mode";
+
+/* Class = "UILabel"; text = "Dark Mode"; ObjectID = "ue2-dK-LJ4"; */
+"ue2-dK-LJ4.text" = "Dark Mode";
