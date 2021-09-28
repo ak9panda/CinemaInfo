@@ -28,6 +28,18 @@ class MovieListViewController: UIViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setupView()
+        
+        moviesVM.movieList.bind { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.moviesCollectionView.reloadData()
+            }
+        }
+        
+        moviesVM.fetchMovies()
+    }
+    
+    private func setupView() {
         let logo = UIBarButtonItem(image: #imageLiteral(resourceName: "tmdb_logo"), style: .plain, target: self, action: nil)
         logo.tintColor = UIColor.init(named: Colors.primary.rawValue)
         self.navigationItem.leftBarButtonItem = logo
@@ -46,14 +58,6 @@ class MovieListViewController: UIViewController, UISearchBarDelegate {
         moviesCollectionView.register(CoverCell.self, forCellWithReuseIdentifier: CoverCell.identifier)
         moviesCollectionView.register(movieCoverCellNib, forCellWithReuseIdentifier: MovieCoverCell.identifier)
         self.moviesCollectionView.refreshControl = refreshControl
-        
-        moviesVM.movieList.bind { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.moviesCollectionView.reloadData()
-            }
-        }
-        
-        moviesVM.fetchMovies()
     }
     
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {

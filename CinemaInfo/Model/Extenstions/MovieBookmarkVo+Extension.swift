@@ -41,16 +41,16 @@ extension MovieBookmarkVO {
         }
     }
     
-    static func fetch() -> [MovieVO?] {
+    static func fetch() -> [MovieVO]? {
         let fetchRequest: NSFetchRequest<MovieBookmarkVO> = MovieBookmarkVO.fetchRequest()
         let sortDescriptor = NSSortDescriptor(key: "id", ascending: false)
         fetchRequest.sortDescriptors = [sortDescriptor]
         do {
             let data = try CoreDataStack.shared.viewContext.fetch(fetchRequest)
             if data.isEmpty {
-                return [MovieVO?]()
+                return [MovieVO]()
             }
-            var bookmarkMovies = [MovieVO?]()
+            var bookmarkMovies = [MovieVO]()
             data.forEach { movie in
                 let movieId = movie.id
                 bookmarkMovies.append(MovieVO.getMovieById(movieId: Int(movieId))!)
@@ -58,7 +58,7 @@ extension MovieBookmarkVO {
             return bookmarkMovies
         }catch {
             print("GetBookmarkMovies : \(error.localizedDescription)")
-            return [MovieVO?]()
+            return [MovieVO]()
         }
     }
     

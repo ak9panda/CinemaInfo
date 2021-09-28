@@ -21,10 +21,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         print("Documents Directory: ", FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last ?? "Not Found!")
         
-        // movie list view controller
+        // movie list viewcontroller
         let movieListVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: String(describing: MovieListViewController.self)) as! UINavigationController
         
-        let bookmarkMoviesVC = BookmarkMoviesRouter.createVC()
+        // bookmark movie viewcontroller
+        let bookmarkMoviesVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: String(describing: BookmarkMoviesViewController.self)) as! UINavigationController
+        
         let settingsVC = SettingRouter.createVC()
         let tabBarController = UITabBarController()
         tabBarController.hidesBottomBarWhenPushed = true
