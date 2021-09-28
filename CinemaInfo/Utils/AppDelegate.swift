@@ -21,7 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         print("Documents Directory: ", FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last ?? "Not Found!")
         
-        let movieListVC = MovieListRouter.createVC()
+        // movie list view controller
+        let movieListVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: String(describing: MovieListViewController.self)) as! UINavigationController
+        
         let bookmarkMoviesVC = BookmarkMoviesRouter.createVC()
         let settingsVC = SettingRouter.createVC()
         let tabBarController = UITabBarController()

@@ -11,7 +11,6 @@ import SDWebImage
 class MovieCoverCell: UICollectionViewCell {
 
     @IBOutlet weak var movieCoverCollectionView: UICollectionView!
-    var presenter: MovieListPresenterProtocol?
     var parientVC: UIViewController?
     
     static var identifier: String {
@@ -57,7 +56,10 @@ extension MovieCoverCell: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let movie = movieList?[indexPath.row] {
-            presenter?.showMovieDetail(viewController: parientVC!, data: movie)
+            if let movieDetailVC = parientVC?.storyboard?.instantiateViewController(withIdentifier: String(describing: MovieDetailViewController.self)) as? MovieDetailViewController {
+                movieDetailVC.movieId = Int(movie.id)
+                parientVC?.navigationController?.pushViewController(movieDetailVC, animated: true)
+            }
         }
     }
 }
