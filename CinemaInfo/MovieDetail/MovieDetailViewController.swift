@@ -28,15 +28,7 @@ class MovieDetailViewController: UIViewController {
     let loadingVC = LoadingIndicatorViewController(nibName: "LoadingIndicatorViewController", bundle: nil)
     var bookmarkBtn = UIBarButtonItem()
     
-    var presenter: MovieDetailPresenterProtocol?
-    var movieDetail: MovieVO?
-    var movieCasts: [Cast]? {
-        didSet {
-            if let _ = movieCasts {
-                CVMovieCasts.reloadData()
-            }
-        }
-    }
+    private var detailVM = MovieDetailViewModel()
     var movieId: Int = 0
     var bookmarkStatus: Bool = false
     var genres: [String]? {
@@ -51,37 +43,15 @@ class MovieDetailViewController: UIViewController {
         super.viewDidLoad()
         
         setupView()
-        initView()
+        
+        detailVM.fetchMovieDetail(movieId: self.movieId)
+        
         bindData()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
-    
     func setupView() {
-        let presenter = MovieDetailPresenter()
-        let interactor = MovieDetailInteractor()
-        let router = MovieDetailRouter()
-        let dataManager = MovieDetailDataManager()
-        
-        presenter.interactor = interactor
-        presenter.router = router
-        presenter.view = self
-        
-        interactor.preseanter = presenter
-        interactor.dataManager = dataManager
-        
-        self.presenter = presenter
-    }
-    
-    func initView() {
         bookmarkBtn = UIBarButtonItem(title: "", style: .plain, target: self, action: #selector(onTouchBookmarkBtn(_:)))
-        bookmarkStatus = presenter?.getBookmarkStatus(movieId: self.movieId) ?? false
+        bookmarkStatus = detailVM.getBookmarkStatus(movieId: self.movieId)
         if #available(iOS 13.0, *) {
             bookmarkBtn.tintColor = .systemIndigo
         } else {
@@ -96,32 +66,40 @@ class MovieDetailViewController: UIViewController {
         CVMovieCasts.register(MovieCastCell.self, forCellWithReuseIdentifier: MovieCastCell.identifier)
         CVMovieCasts.dataSource = self
         CVMovieCasts.delegate = self
-        
-        self.presenter?.fetchMovieDetail(movieId: movieId)
-        self.presenter?.fetchMovieCredits(movieId: movieId)
     }
     
     func bindData() {
-        if let detail = movieDetail {
-            self.lblTitle.text = detail.original_title
-            if let imgCover = detail.backdrop_path {
-                self.imgCover.sd_setImage(with: URL(string: "\(API.BASE_IMG_URL)\(imgCover)"), placeholderImage: UIImage(named: "placeholder_image"), options: SDWebImageOptions.progressiveLoad, completed: nil)
-            }
-            if let imgPoster = detail.poster_path {
-                self.imgPoster.sd_setImage(with: URL(string: "\(API.BASE_IMG_URL)\(imgPoster)"), placeholderImage: UIImage(named: "placeholder_image"), options: SDWebImageOptions.progressiveLoad, completed: nil)
-            }
-            let genres = detail.genres?.allObjects as! [MovieGenreVO]
-            createLables(genre: genres)
-            self.lblRating.text = String(detail.vote_average)
-            self.lblOverview.text = detail.overview
-            self.lblOriginalLang.text = " (\(detail.original_language?.uppercased() ?? "")) "
-            if let rDate = detail.release_date {
-                let dateComp = rDate.components(separatedBy: "-")
-                let releaseDate = " \(dateComp.last!)/\(dateComp[1])/\(dateComp.first!) "
-                self.lblReleaseDate.text = releaseDate
-                self.lblTitle.text! += " (\(dateComp.first!))"
+        detailVM.movieDetail.bind { [weak self] movie in
+            DispatchQueue.main.async {
+                if let detail = movie {
+                    self?.lblTitle.text = detail.original_title
+                    if let imgCover = detail.backdrop_path {
+                        self?.imgCover.sd_setImage(with: URL(string: "\(API.BASE_IMG_URL)\(imgCover)"), placeholderImage: UIImage(named: "placeholder_image"), options: SDWebImageOptions.progressiveLoad, completed: nil)
+                    }
+                    if let imgPoster = detail.poster_path {
+                        self?.imgPoster.sd_setImage(with: URL(string: "\(API.BASE_IMG_URL)\(imgPoster)"), placeholderImage: UIImage(named: "placeholder_image"), options: SDWebImageOptions.progressiveLoad, completed: nil)
+                    }
+                    let genres = detail.genres?.allObjects as! [MovieGenreVO]
+                    self?.createLables(genre: genres)
+                    self?.lblRating.text = String(detail.vote_average)
+                    self?.lblOverview.text = detail.overview
+                    self?.lblOriginalLang.text = " (\(detail.original_language?.uppercased() ?? "")) "
+                    if let rDate = detail.release_date {
+                        let dateComp = rDate.components(separatedBy: "-")
+                        let releaseDate = " \(dateComp.last!)/\(dateComp[1])/\(dateComp.first!) "
+                        self?.lblReleaseDate.text = releaseDate
+                        self?.lblTitle.text! += " (\(dateComp.first!))"
+                    }
+                }
             }
         }
+        
+        detailVM.movieCasts.bind { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.CVMovieCasts.reloadData()
+            }
+        }
+
     }
     
     private func createLables(genre: [MovieGenreVO]) {
@@ -144,13 +122,9 @@ class MovieDetailViewController: UIViewController {
     
     @objc func onTouchBookmarkBtn(_ sender: UIButton) {
         if bookmarkStatus {
-            if let status = presenter?.removeBookmarkMovie(movieId: self.movieId) {
-                bookmarkBtn.image = status ? #imageLiteral(resourceName: "bookmark_empty") : #imageLiteral(resourceName: "bookmark_filled")
-            }
+            bookmarkBtn.image = detailVM.removeBookmark(movieId: self.movieId) ? #imageLiteral(resourceName: "bookmark_empty") : #imageLiteral(resourceName: "bookmark_filled")
         }else {
-            if let status = presenter?.saveBookmarkMovie(movieId: self.movieId) {
-                bookmarkBtn.image = status ? #imageLiteral(resourceName: "bookmark_filled") : #imageLiteral(resourceName: "bookmark_empty")
-            }
+            bookmarkBtn.image = detailVM.saveBookmark(movieId: self.movieId) ? #imageLiteral(resourceName: "bookmark_filled") : #imageLiteral(resourceName: "bookmark_empty")
         }
     }
 }
@@ -161,7 +135,7 @@ extension MovieDetailViewController: UICollectionViewDataSource, UICollectionVie
         return 1
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let count = movieCasts?.count ?? 0
+        let count = detailVM.movieCasts.value?.count ?? 0
         return count > 10 ? 10 : count
     }
     
@@ -169,7 +143,7 @@ extension MovieDetailViewController: UICollectionViewDataSource, UICollectionVie
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCastCell.identifier, for: indexPath) as? MovieCastCell else {
             return UICollectionViewCell()
         }
-        let cast = movieCasts![indexPath.row]
+        let cast = detailVM.movieCasts.value![indexPath.row]
         cell.castName = cast.name
         cell.poster = cast.profilePath
         
