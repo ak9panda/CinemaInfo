@@ -7,42 +7,24 @@
 
 import UIKit
 
-class SearchViewController: UIViewController {
+class SearchViewController: UIViewController, UISearchBarDelegate {
 
     @IBOutlet weak var searchResultsTableView: UITableView!
     
     lazy var searchBar = UISearchBar(frame: CGRect.zero)
-    var presenter: SearchPresenterProtocol?
     
-    var searchResults: [MovieInfoResponse]? {
-        didSet {
-            if let _ = searchResults {
-                DispatchQueue.main.async {
-                    self.searchResultsTableView.reloadData()
-                }
-            }
-        }
-    }
+    private var searchMovieVM = SearchViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        initView()
+        
         setupView()
-    }
-    
-    private func initView() {
-        let presenter = SearchPresenter()
-        let interactor = SearchInteractor()
-        let router = SearchRouter()
         
-        presenter.interactor = interactor
-        presenter.router = router
-        presenter.view = self
-        
-        interactor.presenter = presenter
-        
-        self.presenter = presenter
+        searchMovieVM.resultMovies.bind { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.searchResultsTableView.reloadData()
+            }
+        }
     }
     
     private func setupView() {
@@ -55,8 +37,42 @@ class SearchViewController: UIViewController {
         searchResultsTableView.delegate = self
     }
     
-    func performSearch(name: String) {
-        presenter?.fetchSearchMovies(by: name)
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if let text = searchBar.text {
+            searchMovieVM.fetchMovies(by: text)
+        }
+        searchBar.resignFirstResponder()
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchBar.setShowsCancelButton(true, animated: true)
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchBar.showsCancelButton = false
+        searchBar.resignFirstResponder()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+    
+    func showEmptyMessage() {
+        let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.searchResultsTableView.bounds.size.width, height: self.searchResultsTableView.bounds.size.height))
+        messageLabel.text = "There is no match movies found!"
+        messageLabel.textColor = .darkGray
+        messageLabel.numberOfLines = 0
+        messageLabel.textAlignment = .center
+        messageLabel.font = UIFont.systemFont(ofSize: 15)
+        messageLabel.sizeToFit()
+
+        self.searchResultsTableView.backgroundView = messageLabel
+        self.searchResultsTableView.separatorStyle = .none
+    }
+    
+    func restore() {
+        self.searchResultsTableView.backgroundView = nil
+        self.searchResultsTableView.separatorStyle = .singleLine
     }
 }
 
@@ -67,7 +83,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let results = searchResults?.count ?? 0
+        let results = searchMovieVM.resultMovies.value?.count ?? 0
         if results > 0 {
             self.restore()
         }else {
@@ -80,7 +96,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchedMovieCell.identifier, for: indexPath) as? SearchedMovieCell else {
             return UITableViewCell()
         }
-        cell.movie = searchResults![indexPath.row]
+        cell.movie = searchMovieVM.resultMovies.value![indexPath.row]
         return cell
     }
     

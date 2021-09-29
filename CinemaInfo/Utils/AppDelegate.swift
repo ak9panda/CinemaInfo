@@ -28,6 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let bookmarkMoviesVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: String(describing: BookmarkMoviesViewController.self)) as! UINavigationController
         
         let settingsVC = SettingRouter.createVC()
+        
         let tabBarController = UITabBarController()
         tabBarController.hidesBottomBarWhenPushed = true
         tabBarController.setViewControllers([
